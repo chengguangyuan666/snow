@@ -1,25 +1,24 @@
 define(['axios', 'scp'], function (axios, scp) {
   var approve = {
     defautCallback: function () {
-      console.log(11111)
+      console.log('defautCallback')
     },
     init: function (_form, callback) {
       if (typeof (callback) !== 'function' || callback == undefined) {
         callback = this.defautCallback
       }
-      console.log(_form, '_form')
+      console.log(_form, 'approvejs接受接收到的this.form')
       if (_form.query.ids && _form.query.ids.hasOwnProperty('approve_state')) {
         if (_form.query.ids.approve_state === '0') {
           scp.postback('/api/ac/bizapprove/remoteCall/readInfoList', {
             flowstepId: _form.query.ids.id,
             nodeId: _form.query.ids.node_id
           }, (ret) => {
-            console.log(ret.result, 'daaaaaa')
             if (ret.code === 200) {
               _form.formin = JSON.parse(ret.result.info_list)
               _form.formout = JSON.parse(ret.result.info_list)
               callback(_form)
-              console.log(_form.formin, 'val.formin')
+              console.log(_form, '审批时拿到出入参数据，出参空')
             } else {
               window.app.$Message.error(ret.msg)
             }
@@ -29,11 +28,10 @@ define(['axios', 'scp'], function (axios, scp) {
             flowstepId: _form.query.ids.id,
             nodeId: _form.query.ids.node_id
           }, (ret) => {
-            console.log(ret.result, 'daaaaaa')
             if (ret.code === 200) {
               _form.formin = JSON.parse(ret.result.info_list)
               callback(_form)
-              console.log(_form.formin, 'val.formin')
+              console.log(_form, '查看审批时拿到出入参数据，出参从getFlowApprovalDataById拿')
             } else {
               window.app.$Message.error(ret.msg)
             }
@@ -41,10 +39,7 @@ define(['axios', 'scp'], function (axios, scp) {
           scp.postback('/api/ac/bizapprove/dynamicService/getFlowApprovalDataById', {
             process_instanceId: _form.query.ids.process_instance_id
           }, (ret) => {
-            console.log(ret.result, 'daaaaaa')
-            console.log(ret, 'ret!!!')
             if (ret.errcode === 0) {
-              console.log(ret, 'ret!!!')
               const results = JSON.parse(ret.result.new_data)
               console.log(results, 'results')
               const newres = results
@@ -54,15 +49,15 @@ define(['axios', 'scp'], function (axios, scp) {
                   arr[i].activeId = Object.keys(newres)[i]
                 }
               }
-              console.log(arr, 'arr')
+              console.log(arr, '总出参数组')
               arr.forEach(item => {
                 if (item.activeId === _form.query.ids.activity_id) {
                   _form.formout = item.body
-                  console.log(_form.formout, '_formout')
+                  console.log(_form.formout, '找到上个节点的出参附上')
                 }
               })
               callback(_form)
-              console.log(_form.formin, 'val.formin')
+              console.log(_form, '最终this.form')
             } else {
               window.app.$Message.error(ret.msg)
             }

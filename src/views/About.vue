@@ -20,14 +20,11 @@
       <Checkbox label="9">电商</Checkbox>
       <Checkbox label="10">夜经济</Checkbox>
     </CheckboxGroup>
-    <iframe class="iframe"  v-once src="http://bizapprove.qstb.top/scpcw/#/bizapprove/ymxr/moniterapprove?path=%2FflowHtmlCache%2F7a7a09fd-4d0b-11ec-a354-0242ac110002%2Ffe8bb9dbdef646f0995dc67c68bda8d4&ids=%5Bobject%20Object%5D" ></iframe>
   </div>
 </template>
 <script>
 import { Debounce } from '../utils/debounce.js'
 import { Throttle } from '../utils/fnThrottle.js'
-import Set from '../utils/demo.js'
-import { aaaa } from '../utils/demo2.js'
 export default {
   components: {},
   props: {},

@@ -64,6 +64,51 @@ define(['axios', 'scp'], function (axios, scp) {
           })
         }
       }
+
+      // 11月25日加 管控端看审批页面拿不到query.ids,因为ifrem引入像刷新一样query里的对象变成'[obj,obj]'
+      // 所以新调接口，
+      if (_form.query.flowstepId) {
+        scp.postback('/api/ac/bizapprove/remoteCall/readInfoList', {
+          flowstepId: _form.query.flowstepId,
+          nodeId: _form.query.node_id
+        }, (ret) => {
+          if (ret.code === 200) {
+            _form.formin = JSON.parse(ret.result.info_list)
+            callback(_form)
+            console.log(_form, '管控端')
+          } else {
+            window.app.$Message.error(ret.msg)
+          }
+        })
+        // 不知道调取哪个接口需不需要拿到出参
+        // scp.postback('/api/ac/bizapprove/dynamicService/getFlowApprovalDataById', {
+        //   process_instanceId: _form.query.process_instance_id
+        // }, (ret) => {
+        //   if (ret.errcode === 0) {
+        //     const results = JSON.parse(ret.result.new_data)
+        //     console.log(results, 'results')
+        //     const newres = results
+        //     const arr = Object.values(newres)
+        //     for (let i = 0; i < arr.length; i++) {
+        //       for (let j = 0; j < Object.keys(newres).length; j++) {
+        //         arr[i].activeId = Object.keys(newres)[i]
+        //       }
+        //     }
+        //     console.log(arr, '总出参数组')
+        //     arr.forEach(item => {
+        //       if (item.activeId === _form.query.ids.activity_id) {
+        //         _form.formout = item.body
+        //         console.log(_form.formout, '找到上个节点的出参附上')
+        //       }
+        //     })
+        //     callback(_form)
+        //     console.log(_form, '最终this.form')
+        //   } else {
+        //     window.app.$Message.error(ret.msg)
+        //   }
+        // })
+      }
+
       // 9月27
       const params = window.app.$route.params
       const processKey = window.app.$route.params.processKey
